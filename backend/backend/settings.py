@@ -62,17 +62,25 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-EMAIL_ACTIVE_FIELD = 'is_active'
-EMAIL_SERVER = EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_ADDRESS = EMAIL_HOST_USER = 'yoan.p.dzhelekarski.2017@elsys-bg.org'
-EMAIL_FROM_ADDRESS = 'noreply@hacktues.com'
-EMAIL_PASSWORD = EMAIL_HOST_PASSWORD = 'dhrabhrkoklvboax'
+def EMAIL_VERIFIED_CALLBACK(user):
+    user.is_active = True
+
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+EMAIL_FROM_ADDRESS = 'no-reply@hacktues.com'
 EMAIL_MAIL_SUBJECT = 'hacktues mail confirmation'
 EMAIL_MAIL_HTML = 'mail_body.html'
+EMAIL_MAIL_PLAIN = 'mail_body.txt'
+EMAIL_TOKEN_LIFE = 60 * 60
 EMAIL_PAGE_TEMPLATE = 'confirm_template.html'
-EMAIL_PAGE_DOMAIN = 'https://hacktues.pythonanywhere.com/'
-EMAIL_USE_TLS = True
+EMAIL_PAGE_DOMAIN = 'https://api.hacktues.com/'
+
+SENDGRID_API_KEY = environ.get('apikey')
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+# EMAIL_SERVER = EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_ADDRESS = EMAIL_HOST_USER = 'yoan.p.dzhelekarski.2017@elsys-bg.org'
+# EMAIL_PASSWORD = EMAIL_HOST_PASSWORD = 'dhrabhrkoklvboax'
+# EMAIL_USE_TLS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

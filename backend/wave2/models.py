@@ -58,6 +58,7 @@ class User(AbstractUser):
     AbstractUser._meta.get_field('email').null = True
     AbstractUser._meta.get_field('password').blank = True
     AbstractUser._meta.get_field('username')._unique = False
+    AbstractUser._meta.get_field('is_active').default = False
 
     with open('choices.bytes', 'rb') as f:
         choices = pickle.load(f)

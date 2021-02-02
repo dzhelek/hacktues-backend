@@ -1,6 +1,7 @@
 # coding=windows-1251
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from django.template.loader import render_to_string
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -72,13 +73,17 @@ class UserViewSet(ModelViewSet):
         if not email:
             return Response({'status': 'ready', 'details': 'pick mail'},
                             status=400)
-            token = User.objects.get(email=email).password[21:]
-        url = 'hacktues-git-wave2.zaharymomchilov.vercel.app/change_password'
-        send_mail('Забравена парола',
-                  f'https://{url}/{token}/',
-                  'no-reply@hacktues.com',
-                  [email],
-                  fail_silently=False)
+        user = User.objects.get(email=email)
+        url = f'https://hacktues.com/change_password/{user.password[21:]}/'
+        context = {'link': url, 'user': user}
+        mail_html = render_to_string('forgot_password_mail.html', context)
+        mail_txt = render_to_string('forgot_password_mail.txt', context)
+        msg = EmailMultiAlternatives('hacktues password reset',
+                                     mail_txt,
+                                     'no-reply@hacktues.com',
+                                     [email])
+        msg.attach_alternative(mail_html, "text/html")
+        msg.send()
         return Response({'status': 'done', 'details': 'mail sent'})
 
     @action(detail=False, methods=['post', 'get'],

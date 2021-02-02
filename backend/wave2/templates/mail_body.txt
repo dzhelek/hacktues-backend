@@ -1,0 +1,8 @@
+Вашият акаунт е почти готов, {{ user.first_name }} {{ user.last_name }}!
+За да активирате регистрацията си, моля потвърдете имейла си на следния линк, който е валиден до {{ expiry|time:"TIME_FORMAT" }}:
+{{ link }}
+
+Поздрави,
+Екипът на Hack TUES GG
+
+If you haven't registered anywhere, you may ignore this message - probably someone had accedently entered your e-mail address instead of their own.

@@ -1,7 +1,7 @@
 from datetime import date
 
 from django.utils import timezone
-from django_email_verification import sendConfirm
+from django_email_verification import send_email as sendConfirm
 from rest_framework import serializers
 
 from .models import FieldValidationDate, SmallInteger, Team, Technology, User
