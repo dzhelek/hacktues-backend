@@ -119,6 +119,11 @@ class Team(models.Model):
     def is_confirmed(self):
         min_users = SmallInteger.objects.get(name='min_users_in_team').value
         return self.users.count() >= min_users
+        
+    @property
+    def captain(self):
+        import ipdb; ipdb.set_trace()
+        return self
 
     def __str__(self):
         return self.name
