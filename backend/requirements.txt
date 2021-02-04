@@ -5,3 +5,4 @@ django-cors-headers==3.5.0
 djangorestframework-simplejwt==4.5.0
 django-sendgrid-v5==0.9.0
 django-email-verification==0.1.0
+PyJWT==1.7.1

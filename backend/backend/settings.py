@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = '^21#&4i58g@o&k-n$brbb371x8)qf@l(#c9jefv7_&-2zi+p)e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['84.238.224.124', 'api.hacktues.com', 'admin.hacktues.com',
                  'hacktues.pythonanywhere.com', 'localhost', '127.0.0.1']
@@ -56,7 +56,7 @@ SIMPLE_JWT = {
 def EMAIL_VERIFIED_CALLBACK(user):
     user.is_active = True
 
-# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 EMAIL_FROM_ADDRESS = 'no-reply@hacktues.com'
 EMAIL_MAIL_SUBJECT = 'hacktues mail confirmation'
 EMAIL_MAIL_HTML = 'mail_body.html'

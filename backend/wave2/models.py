@@ -122,8 +122,7 @@ class Team(models.Model):
         
     @property
     def captain(self):
-        import ipdb; ipdb.set_trace()
-        return self
+        return self.users.get(is_captain=True).id
 
     def __str__(self):
         return self.name

@@ -25,7 +25,7 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         model = Team
         fields = ('id', 'name', 'github_link', 'is_full', 'confirmed',
                   'project_name', 'project_description', 'users',
-                  'technologies')
+                  'technologies', 'captain')
         read_only_fields = 'confirmed',
 
     def create(self, validated_data):
