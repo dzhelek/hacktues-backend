@@ -6,10 +6,18 @@ from rest_framework import serializers
 
 from .models import FieldValidationDate, SmallInteger, Team, Technology, User
 
-
+'''
 class UserField(serializers.StringRelatedField):
     def to_internal_value(self, data):
         return User.objects.get(id=int(data))
+'''
+
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name',
+                  'email', 'form', 'is_captain']
 
 
 class TechnologyField(serializers.StringRelatedField):
@@ -17,8 +25,9 @@ class TechnologyField(serializers.StringRelatedField):
         return Technology.objects.get(name=data)
 
 
-class TeamSerializer(serializers.HyperlinkedModelSerializer):
-    users = UserField(many=True)
+class TeamSerializer(serializers.ModelSerializer):
+    #users = UserField(many=True)
+    users = SimpleUserSerializer(many=True)
     technologies = TechnologyField(many=True)
 
     class Meta:
@@ -30,10 +39,11 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         max_teams = SmallInteger.objects.get(name='max_teams').value
+        users = validated_data.pop('users')
+        self.check_users_count(users)
 
-        self.check_users_count(validated_data.get('users'))
-
-        instance = super().create(validated_data)
+        instance = Team.objects.create(**validated_data)
+        instance.users.set(User.objects.filter(id__in=users))
 
         if instance.is_confirmed is False:
             instance.is_full = False
@@ -46,14 +56,15 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        if users := validated_data.get('users'):
+        if users := validated_data.pop('users'):
             if users != [user for user in instance.users.all()]:
                 self.check_editable()
                 self.check_users_count(users)
+            instance.users.set(User.objects.filter(id__in=users))
 
         was_confirmed = instance.confirmed
 
-        instance = super().update(instance, validated_data)
+        instance = instance.update(validated_data)
 
         if instance.is_confirmed is False:
             instance.is_full = False
