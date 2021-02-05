@@ -47,11 +47,9 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-'''
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 }
-'''
 
 def EMAIL_VERIFIED_CALLBACK(user):
     user.is_active = True
