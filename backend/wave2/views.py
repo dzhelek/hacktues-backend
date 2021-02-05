@@ -77,7 +77,7 @@ class UserViewSet(ModelViewSet):
         user = User.objects.get(email=email)
         password = user.password.split('$')
         url = (f'https://hacktues.com/change_password'
-               f'?token_id={password[2]}?token={password[3]}/')
+               f'?token_id={password[2]}&token={password[3]}/')
         context = {'link': url, 'user': user}
         mail_html = render_to_string('forgot_password_mail.html', context)
         mail_txt = render_to_string('forgot_password_mail.txt', context)
