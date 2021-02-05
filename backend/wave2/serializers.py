@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import date
 
 from django.utils import timezone
@@ -6,18 +7,39 @@ from rest_framework import serializers
 
 from .models import FieldValidationDate, SmallInteger, Team, Technology, User
 
-'''
-class UserField(serializers.StringRelatedField):
+class ModifiedRelatedField(serializers.RelatedField):
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            # Ensure that field.choices returns something sensible
+            # even when accessed with a read-only field.
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict([
+            (
+                item.pk,
+                self.display_value(item)
+            )
+            for item in queryset
+        ])
+
+
+class UserField(ModifiedRelatedField):
+    queryset = User.objects.all()
+
     def to_internal_value(self, data):
         return User.objects.get(id=int(data))
-'''
 
-
-class SimpleUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name',
-                  'email', 'form', 'is_captain']
+    def to_representation(self, value):
+        return {'id': value.id,
+                'first_name': value.first_name,
+                'last_name': value.last_name,
+                'email': value.email,
+                'form': value.form,
+                'is_captain': value.is_captain}
 
 
 class TechnologyField(serializers.StringRelatedField):
@@ -26,8 +48,7 @@ class TechnologyField(serializers.StringRelatedField):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    #users = UserField(many=True)
-    users = SimpleUserSerializer(many=True)
+    users = UserField(many=True)
     technologies = TechnologyField(many=True)
 
     class Meta:
@@ -39,11 +60,10 @@ class TeamSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         max_teams = SmallInteger.objects.get(name='max_teams').value
-        users = validated_data.pop('users')
+        users = validated_data.get('users')
         self.check_users_count(users)
 
-        instance = Team.objects.create(**validated_data)
-        instance.users.set(User.objects.filter(id__in=users))
+        instance = super().create(validated_data)
 
         if instance.is_confirmed is False:
             instance.is_full = False
@@ -56,15 +76,14 @@ class TeamSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        if users := validated_data.pop('users'):
+        if users := validated_data.get('users'):
             if users != [user for user in instance.users.all()]:
                 self.check_editable()
                 self.check_users_count(users)
-            instance.users.set(User.objects.filter(id__in=users))
 
         was_confirmed = instance.confirmed
 
-        instance = instance.update(validated_data)
+        instance = super().update(instance, validated_data)
 
         if instance.is_confirmed is False:
             instance.is_full = False
