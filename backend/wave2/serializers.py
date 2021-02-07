@@ -41,6 +41,7 @@ class TeamSerializer(serializers.ModelSerializer):
         max_teams = SmallInteger.objects.get(name='max_teams').value
         users = validated_data.pop('users')
         self.check_users_count(users)
+        self.check_not_in_team(users)
 
         instance = Team.objects.create(**validated_data)
         instance.users.set(User.objects.filter(id__in=users))
@@ -60,6 +61,7 @@ class TeamSerializer(serializers.ModelSerializer):
             if users != [user for user in instance.users.all()]:
                 self.check_editable()
                 self.check_users_count(users)
+                self.check_not_in_team(users)
             instance.users.set(User.objects.filter(id__in=users))
 
         was_confirmed = instance.confirmed
@@ -92,6 +94,12 @@ class TeamSerializer(serializers.ModelSerializer):
         if editable < date.today():
             err = f'team is not editable after {editable}'
             raise serializers.ValidationError(err)
+            
+    @staticmethod
+    def check_not_in_team(users):
+        if any(user.team_set for user in users):
+            err = 'one of the users already has team'
+            raise serializers.ValidationError()
 
 
 class TechnologySerializer(serializers.ModelSerializer):
