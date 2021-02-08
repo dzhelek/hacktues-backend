@@ -20,13 +20,7 @@ class UserPermissions(permissions.BasePermission):
     registered user - get, put*, delete*
     """
     def has_permission(self, request, view):
-        if not request.data.get('username'):
-            return True
-
-        if request.method == 'POST':
-            return request.user.is_staff  # only special users / unregistered
-
-        return True
+        return True  # AllowAny
 
     def has_object_permission(self, request, view, obj):
         if view.action == 'leave_team' and team_not_editable():
@@ -49,12 +43,12 @@ class TeamPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method == 'DELETE' and team_not_editable():
             return False
+            
+        if request.method == 'POST' and request.user.team_set:
+            return False
 
         if is_admin_or_safe(request):
             return True
-
-        if request.method == 'POST':
-            return not request.user.is_staff  # only real users
 
         return True
 

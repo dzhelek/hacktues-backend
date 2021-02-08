@@ -4,7 +4,8 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -22,7 +23,7 @@ def create_log(serializer):
 class TeamViewSet(ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, TeamPermissions]
+    permission_classes = [IsAuthenticatedOrReadOnly, TeamPermissions]
 
     def perform_create(self, serializer):
         user = serializer._kwargs['context']['request'].user
@@ -73,10 +74,9 @@ class TechnologyViewSet(ReadOnlyModelViewSet):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, UserPermissions]
+    permission_classes = [UserPermissions, AllowAny]
 
-    @action(detail=False, methods=['post', 'get'],
-            permission_classes=permission_classes)
+    @action(detail=False, methods=['post', 'get'])
     def forgotten_password(self, request):
         email = request.data.get('email')
         if not email:
@@ -97,8 +97,7 @@ class UserViewSet(ModelViewSet):
         msg.send()
         return Response({'status': 'done', 'details': 'mail sent'})
 
-    @action(detail=False, methods=['post', 'get'],
-            permission_classes=permission_classes)
+    @action(detail=False, methods=['post', 'get'])
     def change_password(self, request):
         token_id = request.data.get('token_id')
         token = request.data.get('token')
