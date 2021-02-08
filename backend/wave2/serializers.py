@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from .models import FieldValidationDate, SmallInteger, Team, Technology, User
 
+
 class ModifiedRelatedField(serializers.RelatedField):
     def get_choices(self, cutoff=None):
         queryset = self.get_queryset()
@@ -34,12 +35,15 @@ class UserField(ModifiedRelatedField):
         return User.objects.get(id=int(data))
 
     def to_representation(self, value):
-        return {'id': value.id,
-                'first_name': value.first_name,
-                'last_name': value.last_name,
-                'email': value.email,
-                'form': value.form,
-                'is_captain': value.is_captain}
+        return {
+            'id': value.id,
+            'first_name': value.first_name,
+            'last_name': value.last_name,
+            'email': value.email,
+            'form': value.form,
+            'is_captain': value.is_captain,
+            'discord_id': value.discord_id,
+        }
 
 
 class TechnologyField(serializers.StringRelatedField):
@@ -113,12 +117,12 @@ class TeamSerializer(serializers.ModelSerializer):
         if editable < date.today():
             err = f'team is not editable after {editable}'
             raise serializers.ValidationError(err)
-            
+
     @staticmethod
     def check_not_in_team(users):
-        if any(user.team_set for user in users):
+        if any(user.team_set.count() for user in users):
             err = 'one of the users already has team'
-            raise serializers.ValidationError()
+            raise serializers.ValidationError(err)
 
 
 class TechnologySerializer(serializers.ModelSerializer):
@@ -144,7 +148,6 @@ class UserSerializer(serializers.ModelSerializer):
         except Exception as e:
             with open('email_log.txt', 'a') as f:
                 f.write(str(e) + '\n')
-
 
     def create(self, validated_data):
         instance = super().create(validated_data)
