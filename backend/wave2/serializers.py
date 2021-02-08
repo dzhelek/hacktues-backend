@@ -35,12 +35,15 @@ class UserField(ModifiedRelatedField):
         return User.objects.get(id=int(data))
 
     def to_representation(self, value):
-        return {'id': value.id,
-                'first_name': value.first_name,
-                'last_name': value.last_name,
-                'email': value.email,
-                'form': value.form,
-                'is_captain': value.is_captain}
+        return {
+            'id': value.id,
+            'first_name': value.first_name,
+            'last_name': value.last_name,
+            'email': value.email,
+            'form': value.form,
+            'is_captain': value.is_captain,
+            'discord_id': value.discord_id,
+        }
 
 
 class TechnologyField(serializers.StringRelatedField):
