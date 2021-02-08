@@ -69,7 +69,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = ['https://hacktues.com']
+CORS_ALLOWED_ORIGINS = ['https://hacktues.com/', 'http://localhost:3000/',
+                        'https://beta.hacktues.com/']
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
