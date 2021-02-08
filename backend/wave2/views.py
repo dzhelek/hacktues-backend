@@ -36,6 +36,14 @@ class TeamViewSet(ModelViewSet):
     def perform_update(self, serializer):
         create_log(serializer)
         return super().perform_update(serializer)
+        
+    def perform_destroy(self, instance):
+        for user in instance.users.all():
+            if user.is_captain:
+                user.is_captain = False
+                user.save()
+                break
+        return super().perform_destroy(instance)
 
     @action(detail=True, methods=['post', 'get'],
             permission_classes=[IsAuthenticated, TeamPermissions])
