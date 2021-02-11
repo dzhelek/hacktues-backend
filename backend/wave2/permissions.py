@@ -44,7 +44,7 @@ class TeamPermissions(permissions.BasePermission):
         if request.method == 'DELETE' and team_not_editable():
             return False
             
-        if request.method == 'POST' and request.user.team_set:
+        if request.method == 'POST' and request.user.team_set.count():
             return False
 
         if is_admin_or_safe(request):

@@ -23,15 +23,13 @@ class SmallIntegerAdmin(admin.ModelAdmin):
 @admin.register(models.Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = 'name', 'github_link', 'is_full', 'confirmed'
-    '''
     fieldsets = (
-        (None, {'fields': ('id', 'name', 'github_link', 'users'
+        (None, {'fields': ('id', 'name', 'github_link', 'users',
                            'is_full', 'confirmed')}),
         ('Project info', {'fields': ('project_name', 'project_description',
                                      'technologies')}),
         ('Additional info', {'fields': ('ready', 'is_confirmed')}),
     )
-    '''
     readonly_fields = 'is_confirmed', 'confirmed', 'id'
     list_filter = 'is_full',
 
@@ -55,13 +53,10 @@ class UserAdmin(UserAdmin):
         }),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
-    list_display = ('email', 'name', 'form', 'phone', 'tshirt_size',
-                    'food_preferences', 'alergies', 'is_staff', 'is_active',
-                    'is_online')
-    list_filter = ('is_active', 'is_staff', 'is_online', 'groups',
-                   'food_preferences', 'tshirt_size', 'alergies',
-                   'form', 'technologies')
-    ordering = 'date_joined', 'first_name', 'last_name'
+    list_display = ('id', 'email', 'name', 'form', 'phone', 'tshirt_size',
+                    'discord_id', 'is_active')
+    list_filter = ('is_active', 'is_staff', 'tshirt_size', 'form')
+    ordering = 'id',
     readonly_fields = 'id',
 
     def name(self, obj):
