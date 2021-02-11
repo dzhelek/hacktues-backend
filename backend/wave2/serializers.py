@@ -63,6 +63,7 @@ class TeamSerializer(serializers.ModelSerializer):
         read_only_fields = 'confirmed',
 
     def create(self, validated_data):
+        self.check_editable()
         max_teams = SmallInteger.objects.get(name='max_teams').value
         users = validated_data.get('users')
         self.check_users_count(users)
@@ -82,7 +83,10 @@ class TeamSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         if users := validated_data.get('users'):
-            if users != [user for user in instance.users.all()]:
+            before = [user for user in instance.users.all()]
+            after = users
+            if before != after:
+                users = [user for user in before if user not in after]
                 self.check_editable()
                 self.check_users_count(users)
                 self.check_not_in_team(users)
