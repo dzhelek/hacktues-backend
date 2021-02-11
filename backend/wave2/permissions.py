@@ -34,7 +34,8 @@ class TeamPermissions(permissions.BasePermission):
     captain: - ..., put*, delete*
     """
     def has_permission(self, request, view):
-        if view.action == 'change_captain':
+        if (view.action == 'change_captain' or
+            request.method in permissions.SAFE_METHODS):
             return True
 
         if request.method == 'DELETE' and team_not_editable():
@@ -49,7 +50,8 @@ class TeamPermissions(permissions.BasePermission):
         if view.action == 'change_captain' and team_not_editable():
             return False
 
-        if request.user.is_captain and request.user.team_set.first() == obj:
+        if (request.user.is_captain and request.user.team_set.first() == obj
+            or request.method in permissions.SAFE_METHODS):
             return True
 
         return False
