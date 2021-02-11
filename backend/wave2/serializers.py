@@ -86,8 +86,9 @@ class TeamSerializer(serializers.ModelSerializer):
             before = [user for user in instance.users.all()]
             after = users
             if before != after:
-                users = [user for user in before if user not in after]
                 self.check_editable()
+                users = [user for user in after if user not in before]
+            if users:
                 self.check_users_count(users)
                 self.check_not_in_team(users)
 
