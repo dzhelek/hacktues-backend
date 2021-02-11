@@ -46,16 +46,11 @@ class TeamViewSet(ModelViewSet):
                 break
         return super().perform_destroy(instance)
 
-    @action(detail=True, methods=['post', 'get'],
-            permission_classes=[IsAuthenticated, TeamPermissions])
+    @action(detail=True, methods=['post', 'get'])
     def change_captain(self, request, pk=None):
         self.check_object_permissions(request, Team.objects.get(id=pk))
         if request.method == 'POST':
-            if len(users := request.data.getlist('users')) != 1:
-                raise ValidationError('specify one user')
-            # the format of users is 'http://host/users/5/'
-            new_captain_id = int(users[0].split('/')[-2])
-            new_captain = User.objects.get(id=new_captain_id)
+            new_captain = User.objects.get(id=int(request.data.get('users')))
             request.user.is_captain = False
             new_captain.is_captain = True
             request.user.save()
@@ -63,7 +58,7 @@ class TeamViewSet(ModelViewSet):
             return Response({'status': 'done', 'details': 'captain changed'})
         else:
             return Response({'status': 'ready', 'details': 'pick a user'},
-                            status=400)
+                            status=405)
 
 
 class TechnologyViewSet(ReadOnlyModelViewSet):

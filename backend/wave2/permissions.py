@@ -5,13 +5,6 @@ from rest_framework import permissions
 from wave2.models import FieldValidationDate
 
 
-def is_admin_or_safe(request):
-    return (
-        request.user.is_superuser or
-        request.method in permissions.SAFE_METHODS
-    )
-
-
 class UserPermissions(permissions.BasePermission):
     """
     allowed methods:
@@ -26,7 +19,7 @@ class UserPermissions(permissions.BasePermission):
         if view.action == 'leave_team' and team_not_editable():
             return False
 
-        if is_admin_or_safe(request) or request.user == obj:
+        if request.user == obj:
             return True
 
         return False
@@ -41,14 +34,14 @@ class TeamPermissions(permissions.BasePermission):
     captain: - ..., put*, delete*
     """
     def has_permission(self, request, view):
+        if view.action == 'change_captain':
+            return True
+
         if request.method == 'DELETE' and team_not_editable():
             return False
             
         if request.method == 'POST' and request.user.team_set.count():
             return False
-
-        if is_admin_or_safe(request):
-            return True
 
         return True
 
@@ -56,13 +49,11 @@ class TeamPermissions(permissions.BasePermission):
         if view.action == 'change_captain' and team_not_editable():
             return False
 
-        is_team_captain = (
-            request.user.is_captain and request.user.team_set.first() == obj
-        )
-        if is_admin_or_safe(request) or is_team_captain:
+        if request.user.is_captain and request.user.team_set.first() == obj:
             return True
 
         return False
+
 
 def team_not_editable():
     return (
