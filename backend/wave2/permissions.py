@@ -16,6 +16,9 @@ class UserPermissions(permissions.BasePermission):
         return True  # AllowAny
 
     def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         if view.action == 'leave_team' and team_not_editable():
             return False
 
@@ -47,6 +50,9 @@ class TeamPermissions(permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         if view.action == 'change_captain' and team_not_editable():
             return False
 
