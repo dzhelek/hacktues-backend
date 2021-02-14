@@ -22,7 +22,7 @@ class SmallIntegerAdmin(admin.ModelAdmin):
 
 @admin.register(models.Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = 'name', 'github_link', 'is_full', 'confirmed'
+    list_display = 'name', 'captain', 'is_full', 'confirmed'
     fieldsets = (
         (None, {'fields': ('id', 'name', 'github_link', 'users',
                            'is_full', 'confirmed')}),
@@ -34,6 +34,11 @@ class TeamAdmin(admin.ModelAdmin):
     readonly_fields = 'is_confirmed', 'id', 'date_joined'
     list_filter = 'is_full', 'confirmed'
     ordering = 'date_joined',
+
+    def captain(self, obj):
+        return models.User.objects.get(id=obj.captain)
+
+    captain.short_description = 'captain'
 
 
 admin.site.register(models.Technology)
