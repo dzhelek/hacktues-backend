@@ -5,7 +5,7 @@ from rest_framework import routers
 from . import views
 
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register('users', views.UserViewSet)
 router.register('technologies', views.TechnologyViewSet)
 router.register('teams', views.TeamViewSet)
