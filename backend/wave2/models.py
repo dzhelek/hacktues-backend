@@ -115,6 +115,8 @@ class Team(models.Model):
     ready = models.DateTimeField(blank=True, null=True)
     confirmed = models.BooleanField(default=False)
 
+    date_joined = models.DateTimeField(auto_now_add=True)
+
     @property
     def is_confirmed(self):
         min_users = SmallInteger.objects.get(name='min_users_in_team').value

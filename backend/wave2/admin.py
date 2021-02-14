@@ -28,10 +28,12 @@ class TeamAdmin(admin.ModelAdmin):
                            'is_full', 'confirmed')}),
         ('Project info', {'fields': ('project_name', 'project_description',
                                      'technologies')}),
-        ('Additional info', {'fields': ('ready', 'is_confirmed')}),
+        ('Additional info', {'fields': ('ready', 'is_confirmed',
+                                        'date_joined')}),
     )
-    readonly_fields = 'is_confirmed', 'confirmed', 'id'
-    list_filter = 'is_full',
+    readonly_fields = 'is_confirmed', 'id', 'date_joined'
+    list_filter = 'is_full', 'confirmed'
+    ordering = 'date_joined',
 
 
 admin.site.register(models.Technology)
