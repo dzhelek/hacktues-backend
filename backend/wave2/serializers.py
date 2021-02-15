@@ -83,13 +83,13 @@ class TeamSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         if users := validated_data.get('users'):
+            self.check_users_count(users)
             before = [user for user in instance.users.all()]
             after = users
             if before != after:
                 self.check_editable()
                 users = [user for user in after if user not in before]
             if users:
-                self.check_users_count(users)
                 self.check_not_in_team(users)
 
         was_confirmed = instance.confirmed
