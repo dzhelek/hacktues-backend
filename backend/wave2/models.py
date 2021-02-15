@@ -124,7 +124,22 @@ class Team(models.Model):
         
     @property
     def captain(self):
-        return self.users.get(is_captain=True).id
+        if not self.users.count():
+            self.delete()
+        try:
+            captain = self.users.get(is_captain=True)
+        except User.MultipleObjectsReturned:
+            for user in self.users.all():
+                user.is_captain = False
+                user.save()
+            captain = self.users.first()
+            captain.is_captain = True
+            captain.save()
+        except User.DoesNotExist:
+            captain = self.users.first()
+            captain.is_captain = True
+            captain.save()
+        return captain.id
 
     def __str__(self):
         return self.name
