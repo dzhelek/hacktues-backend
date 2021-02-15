@@ -73,7 +73,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
         if instance.is_confirmed is False:
             instance.is_full = False
-        elif Team.objects.count() > max_teams:
+        elif Team.objects.filter(confirmed=True).count() > max_teams:
             instance.ready = timezone.now()
         else:
             instance.confirmed = instance.is_confirmed
@@ -110,7 +110,7 @@ class TeamSerializer(serializers.ModelSerializer):
                     team.ready = None
                     team.confirmed = True
                     team.save()
-        elif Team.objects.count() > max_teams:
+        elif Team.objects.filter(confirmed=True).count() > max_teams:
             instance.ready = timezone.now()
         else:
             instance.confirmed = instance.is_confirmed
