@@ -89,6 +89,8 @@ class TeamSerializer(serializers.ModelSerializer):
             if before != after:
                 self.check_editable()
                 users = [user for user in after if user not in before]
+            else:
+                users = []
             if users:
                 self.check_not_in_team(users)
 
@@ -100,6 +102,7 @@ class TeamSerializer(serializers.ModelSerializer):
         if instance.is_confirmed is False:
             instance.is_full = False
             instance.confirmed = False
+            instance.ready = None
             instance.save()
             if was_confirmed:
                 team = Team.objects.filter(ready__lte=timezone.now()).first()
@@ -111,6 +114,7 @@ class TeamSerializer(serializers.ModelSerializer):
             instance.ready = timezone.now()
         else:
             instance.confirmed = instance.is_confirmed
+            instance.save()
 
         return instance
 
