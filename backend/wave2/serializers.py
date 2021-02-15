@@ -93,6 +93,7 @@ class TeamSerializer(serializers.ModelSerializer):
                 self.check_not_in_team(users)
 
         was_confirmed = instance.confirmed
+        max_teams = SmallInteger.objects.get(name='max_teams').value
 
         instance = super().update(instance, validated_data)
 
@@ -106,6 +107,10 @@ class TeamSerializer(serializers.ModelSerializer):
                     team.ready = None
                     team.confirmed = True
                     team.save()
+        elif Team.objects.count() > max_teams:
+            instance.ready = timezone.now()
+        else:
+            instance.confirmed = instance.is_confirmed
 
         return instance
 
