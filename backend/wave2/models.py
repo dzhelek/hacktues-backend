@@ -87,6 +87,10 @@ class User(AbstractUser):
         'first_name', 'last_name', 'form', 'tshirt_size',
     ]
 
+    @property
+    def has_team(self):
+        return bool(self.team_set.count())
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.form}"
 

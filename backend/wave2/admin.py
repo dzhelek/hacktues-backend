@@ -34,6 +34,7 @@ class TeamAdmin(admin.ModelAdmin):
     readonly_fields = 'is_confirmed', 'id', 'date_joined'
     list_filter = 'is_full', 'confirmed'
     ordering = 'date_joined',
+    filter_horizontal = 'users', 'technologies'
 
     def captain(self, obj):
         return models.User.objects.get(id=obj.captain)
@@ -61,7 +62,7 @@ class UserAdmin(UserAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     list_display = ('id', 'email', 'name', 'form', 'phone', 'tshirt_size',
-                    'discord_id', 'is_active')
+                    'discord_id', 'is_active', 'has_team')
     list_filter = ('is_active', 'is_staff', 'tshirt_size', 'form')
     ordering = 'id',
     readonly_fields = 'id',
@@ -70,3 +71,9 @@ class UserAdmin(UserAdmin):
         return obj.get_full_name()
 
     name.short_description = 'name'
+
+    def has_team(self, obj):
+        return bool(obj.team_set.count())
+
+    has_team.is_boolean = True
+    has_team.short_description = 'has_team'
