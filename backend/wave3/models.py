@@ -9,7 +9,7 @@ class Mentor(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=15)
     was_mentor = models.BooleanField()
-    elsys = models.SmallIntegerField()
+    elsys = models.SmallIntegerField(blank=True)
     organization = models.CharField(max_length=100)
     pozition = models.CharField(max_length=100)
     free = models.TextField()
