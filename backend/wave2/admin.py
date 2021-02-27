@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 
 from . import models
 
-
 @admin.register(models.FieldValidationDate)
 class DateAdmin(admin.ModelAdmin):
     list_display = 'field', 'date'
@@ -77,3 +76,19 @@ class UserAdmin(UserAdmin):
 
     has_team.is_boolean = True
     has_team.short_description = 'has_team'
+
+
+class RegisteredUser(models.User):
+    class Meta:
+        proxy = True
+
+
+@admin.register(RegisteredUser)
+class RegisteredUserAdmin(UserAdmin):
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        ids = set()
+        for user in queryset:
+            if user.has_team:
+                ids.add(user.id)
+        return queryset.filter(id__in=ids)
