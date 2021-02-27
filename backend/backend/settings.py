@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'wave1.apps.Wave1Config',
     'wave2.apps.Wave2Config',
+    'wave3.apps.Wave3Config',
     'rest_framework',
     'corsheaders',
     'django_email_verification',
