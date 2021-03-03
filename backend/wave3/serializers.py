@@ -9,4 +9,4 @@ class MentorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mentor
         fields = ('id', 'technologies', 'profile_picture', 'full_name',
-                  'elsys', 'organization', 'pozition', 'free')
+                  'elsys', 'organization', 'position', 'free')

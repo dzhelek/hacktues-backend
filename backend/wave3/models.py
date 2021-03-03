@@ -11,7 +11,7 @@ class Mentor(models.Model):
     was_mentor = models.BooleanField()
     elsys = models.SmallIntegerField(blank=True, null=True)
     organization = models.CharField(max_length=100)
-    pozition = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
     free = models.TextField()
     tshirt_size = models.CharField(max_length=5)
     agreed = models.TextField()
