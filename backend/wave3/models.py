@@ -16,3 +16,4 @@ class Mentor(models.Model):
     tshirt_size = models.CharField(max_length=5)
     agreed = models.TextField()
     xp = models.TextField()
+    displayed = models.BooleanField(default=True)
